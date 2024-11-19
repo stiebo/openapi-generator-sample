@@ -1,0 +1,707 @@
+openapi: 3.0.1
+info:
+  title: Transaction Service With Fraud Protection
+  description: Documentation for the Anti-Fraud System API
+  version: 0.0.1
+servers:
+  - url: https://stiebo.dev/antifraudsystem
+  - url: http://localhost:28858
+paths:
+  /api/auth/role:
+    put:
+      tags:
+        - user-controller
+      summary: Change user role
+      description: "Change the role of an existing user (Role: ADMINISTRATOR)"
+      operationId: changeRole
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/ChangeRoleDto"
+        required: true
+      responses:
+        "409":
+          description: Role already provided
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+        "400":
+          description: Validation failed for request parameter
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ValidationErrorResponse"
+        "404":
+          description: User not found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+        "200":
+          description: Success
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/UserDto"
+      security:
+        - basicAuth: []
+  /api/auth/access:
+    put:
+      tags:
+        - user-controller
+      summary: Change user access
+      description: "Lock or unlock an existing user (Role: ADMINISTRATOR)"
+      operationId: changeAccess
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/ChangeAccessDto"
+        required: true
+      responses:
+        "200":
+          description: Success
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                    example: "User username unlocked."
+        "400":
+          description: Unable to lock admin
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+        "404":
+          description: User not found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+      security:
+        - basicAuth: []
+  /api/antifraud/transaction:
+    put:
+      tags:
+        - anti-fraud-controller
+      summary: Send feedback
+      description: "Submits feedback on a transaction's validity (Role: SUPPORT)"
+      operationId: uploadTransactionFeedback
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/UpdateTransactionFeedback"
+        required: true
+      responses:
+        "409":
+          description: Transaction feedback already exists
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+        "200":
+          description: Success
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/TransactionOutDto"
+        "400":
+          description: Validation failed for request parameter
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ValidationErrorResponse"
+        "422":
+          description: Wrong feedback
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ValidationErrorResponse"
+      security:
+        - basicAuth: []
+    post:
+      tags:
+        - anti-fraud-controller
+      summary: Post a transaction
+      description: "Submits a transaction for fraud analysis (Role: MERCHANT)"
+      operationId: postTransaction
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/PostTransactionInDto"
+        required: true
+      responses:
+        "200":
+          description: Success
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/PostTransactionOutDto"
+        "400":
+          description: Validation failed for request parameter
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ValidationErrorResponse"
+      security:
+        - basicAuth: []
+  /api/auth/user:
+    post:
+      tags:
+        - user-controller
+      summary: Create user
+      description: Register as a new user in the system
+      operationId: createUser
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/NewUserDto"
+        required: true
+      responses:
+        "409":
+          description: User already exists
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+        "201":
+          description: Created
+          content:
+            '*/*':
+              schema:
+                $ref: "#/components/schemas/UserDto"
+  /api/antifraud/suspicious-ip:
+    get:
+      tags:
+        - anti-fraud-controller
+      summary: List suspicious IPs
+      description: "Retrieves the list of suspicious IP addresses (Role: SUPPORT)"
+      operationId: getSuscipiousIps
+      responses:
+        "200":
+          description: Success
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/SuspiciousIpOutDto"
+      security:
+        - basicAuth: []
+    post:
+      tags:
+        - anti-fraud-controller
+      summary: Add suspicious IP
+      description: "Adds an IP address to the suspicious-IPs list (Role: SUPPORT)"
+      operationId: postSuspiciousIp
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/SuspiciousIpInDto"
+        required: true
+      responses:
+        "400":
+          description: Validation failed for request parameter
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ValidationErrorResponse"
+        "200":
+          description: Success
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/SuspiciousIpOutDto"
+        "409":
+          description: IP address already exists
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+      security:
+        - basicAuth: []
+  /api/antifraud/stolencard:
+    get:
+      tags:
+        - anti-fraud-controller
+      summary: List stolen cards
+      description: "Retrieves the list of stolen cards (Role: SUPPORT)"
+      operationId: getStolenCards
+      responses:
+        "200":
+          description: Success
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/StolenCardOutDto"
+      security:
+        - basicAuth: []
+    post:
+      tags:
+        - anti-fraud-controller
+      summary: Add stolen card
+      description: "Adds a card number to the stolen cards list (Role: SUPPORT)"
+      operationId: postStolenCard
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/StolenCardInDto"
+        required: true
+      responses:
+        "409":
+          description: Stolen card already exists
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+        "400":
+          description: Validation failed for request parameter
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ValidationErrorResponse"
+        "200":
+          description: Success
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/StolenCardOutDto"
+      security:
+        - basicAuth: []
+  /api/auth/list:
+    get:
+      tags:
+        - user-controller
+      summary: List users
+      description: "Retrieves a list of all registered users (Role: ADMINISTRATOR)"
+      operationId: getUsers
+      responses:
+        "200":
+          description: Success
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/UserDto"
+      security:
+        - basicAuth: []
+  /api/antifraud/history:
+    get:
+      tags:
+        - anti-fraud-controller
+      summary: Transaction history
+      description: "Retrieves the history of processed transactions (Role: SUPPORT)"
+      operationId: getTransactionHistory
+      responses:
+        "200":
+          description: Success
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/TransactionOutDto"
+      security:
+        - basicAuth: []
+  /api/antifraud/history/{number}:
+    get:
+      tags:
+        - anti-fraud-controller
+      summary: Transaction history by card
+      description: "Retrieves transaction history for a specific card number (Role:\
+        \ SUPPORT)"
+      operationId: getTransactionHistoryByNumber
+      parameters:
+        - name: number
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        "400":
+          description: Validation failed for request parameter
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ValidationErrorResponse"
+        "200":
+          description: Success
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/TransactionOutDto"
+        "404":
+          description: Card number not found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+      security:
+        - basicAuth: []
+  /api/clear-data:
+    delete:
+      tags:
+        - clear-data-controller
+      summary: Reset demo data
+      description: Reset the API and delete all data from the server. This endpoint
+        is meant for demo purposes to showcase a fresh install.
+      operationId: clearData
+      responses:
+        "200":
+          description: Successfully deleted all data
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                    example: "Demo server has been reset and all data removed."
+        "500":
+          description: Error deleting data
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+  /api/auth/user/{username}:
+    delete:
+      tags:
+        - user-controller
+      summary: Delete user
+      description: "Delete an existing user (Role: ADMINISTRATOR)"
+      operationId: deleteUser
+      parameters:
+        - name: username
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        "400":
+          description: Validation failed for request parameter
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ValidationErrorResponse"
+        "404":
+          description: User not found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+        "200":
+          description: Success
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/DeleteUserDto"
+              example:
+                username: "johndoe"
+                status: "Deleted successfully!"
+      security:
+        - basicAuth: []
+  /api/antifraud/suspicious-ip/{ip}:
+    delete:
+      tags:
+        - anti-fraud-controller
+      summary: Remove suspicious IP
+      description: "Removes an IP address from the suspicious-IP list (Role: SUPPORT)"
+      operationId: deleteSuspiciousIp
+      parameters:
+        - name: ip
+          in: path
+          required: true
+          schema:
+            pattern: "^((25[0-5]|(2[0-4]|1\\d|[1-9]|)\\d)\\.?\\b){4}$"
+            type: string
+      responses:
+        "200":
+          description: Success
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                    example: "IP 192.168.0.1 successfully removed!"
+        "400":
+          description: Validation failed for request parameter
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ValidationErrorResponse"
+        "404":
+          description: IP not found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+      security:
+        - basicAuth: []
+  /api/antifraud/stolencard/{number}:
+    delete:
+      tags:
+        - anti-fraud-controller
+      summary: Remove stolen card
+      description: "Removes a card number from the stolen cards list (Role: SUPPORT)"
+      operationId: deleteStolenCard
+      parameters:
+        - name: number
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        "404":
+          description: Stolen card not found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+        "400":
+          description: Validation failed for request parameter
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ValidationErrorResponse"
+        "200":
+          description: Success
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                    example: "Card 4000008449433403 successfully removed!"
+      security:
+        - basicAuth: []
+components:
+  schemas:
+    ChangeRoleDto:
+      required:
+        - role
+        - username
+      type: object
+      properties:
+        username:
+          type: string
+        role:
+          pattern: MERCHANT|SUPPORT
+          type: string
+    ErrorResponse:
+      type: object
+      properties:
+        timestamp:
+          type: string
+          format: date-time
+        status:
+          type: integer
+          format: int32
+        error:
+          type: string
+        message:
+          type: string
+        path:
+          type: string
+    FieldError:
+      type: object
+      properties:
+        fieldName:
+          type: string
+        errorMessage:
+          type: string
+    ValidationErrorResponse:
+      type: object
+      properties:
+        timestamp:
+          type: string
+          format: date-time
+        status:
+          type: integer
+          format: int32
+        error:
+          type: string
+        fieldErrors:
+          type: array
+          items:
+            $ref: "#/components/schemas/FieldError"
+        path:
+          type: string
+    UserDto:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int64
+        name:
+          type: string
+        username:
+          type: string
+        role:
+          type: string
+        status:
+          type: string
+    ChangeAccessDto:
+      required:
+        - operation
+        - username
+      type: object
+      properties:
+        username:
+          type: string
+        operation:
+          pattern: LOCK|UNLOCK
+          type: string
+    UpdateTransactionFeedback:
+      required:
+        - feedback
+        - transactionId
+      type: object
+      properties:
+        transactionId:
+          type: integer
+          format: int64
+        feedback:
+          pattern: ALLOWED|MANUAL_PROCESSING|PROHIBITED
+          type: string
+    TransactionOutDto:
+      type: object
+      properties:
+        transactionId:
+          type: integer
+          format: int64
+          example: 42
+        amount:
+          type: integer
+          format: int64
+          example: 234
+        ip:
+          type: string
+          example: "192.168.1.1"
+        number:
+          type: string
+          example: "4000008449433403"
+        region:
+          type: string
+          example: "MENA"
+        date:
+          type: string
+          format: date-time
+        result:
+          type: string
+          example: "MANUAL_PROCESSING"
+        feedback:
+          type: string
+    NewUserDto:
+      required:
+        - name
+        - password
+        - username
+      type: object
+      properties:
+        name:
+          type: string
+        username:
+          type: string
+        password:
+          type: string
+    PostTransactionInDto:
+      required:
+        - amount
+        - date
+        - ip
+        - number
+        - region
+      type: object
+      properties:
+        amount:
+          minimum: 1
+          type: integer
+          format: int64
+        ip:
+          pattern: "^((25[0-5]|(2[0-4]|1\\d|[1-9]|)\\d)\\.?\\b){4}$"
+          type: string
+          example: "192.168.0.1"
+        number:
+          type: string
+          example: "4000008449433402"
+        region:
+          pattern: EAP|ECA|HIC|LAC|MENA|SA|SSA
+          type: string
+        date:
+          type: string
+          format: date-time
+    PostTransactionOutDto:
+      type: object
+      properties:
+        result:
+          type: string
+          example: "PROHIBITED"
+        info:
+          type: string
+          example: "amount, ip"
+    SuspiciousIpInDto:
+      required:
+        - ip
+      type: object
+      properties:
+        ip:
+          pattern: "^((25[0-5]|(2[0-4]|1\\d|[1-9]|)\\d)\\.?\\b){4}$"
+          type: string
+          example: "192.168.0.1"
+    SuspiciousIpOutDto:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int64
+          example: 42
+        ip:
+          type: string
+          example: "192.168.0.1"
+    StolenCardInDto:
+      required:
+        - number
+      type: object
+      properties:
+        number:
+          type: string
+          example: "4000008449433403"
+    StolenCardOutDto:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int64
+          example: 42
+        number:
+          type: string
+          example: "4000008449433403"
+    DeleteUserDto:
+      type: object
+      properties:
+        username:
+          type: string
+        status:
+          type: string
+  securitySchemes:
+    basicAuth:
+      type: http
+      scheme: basic

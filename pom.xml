@@ -1,0 +1,108 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+		 xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
+<modelVersion>4.0.0</modelVersion>
+
+<parent>
+	<groupId>org.springframework.boot</groupId>
+	<artifactId>spring-boot-starter-parent</artifactId>
+	<version>3.3.5</version>
+	<relativePath/>
+	<!-- lookup parent from repository -->
+</parent>
+
+<groupId>dev.stiebo</groupId>
+<artifactId>openapi-generator-sample</artifactId>
+<version>0.0.1</version>
+<name>Open API Demo</name>
+<description>OpenAPI source code generation</description>
+
+<properties>
+	<java.version>23</java.version>
+	<openapi-generator-maven-plugin.version>7.9.0</openapi-generator-maven-plugin.version>
+	<spring-doc.version>2.6.0</spring-doc.version>
+</properties>
+
+<dependencies>
+	<!-- Standard Spring Boot dependencies -->
+	<dependency>
+		<groupId>org.springframework.boot</groupId>
+		<artifactId>spring-boot-starter-web</artifactId>
+	</dependency>
+	<!-- Spring Boot OpenAPI integration -->
+	<dependency>
+		<groupId>org.springdoc</groupId>
+		<artifactId>springdoc-openapi-starter-webmvc-ui</artifactId>
+		<version>${spring-doc.version}</version>
+	</dependency>
+	<dependency>
+		<groupId>org.springframework.boot</groupId>
+		<artifactId>spring-boot-starter-test</artifactId>
+		<scope>test</scope>
+	</dependency>
+</dependencies>
+
+<build>
+	<defaultGoal>clean package</defaultGoal>
+	<plugins>
+		<plugin>
+			<groupId>org.openapitools</groupId>
+			<artifactId>openapi-generator-maven-plugin</artifactId>
+			<version>${openapi-generator-maven-plugin.version}</version>
+			<configuration>
+				<additionalProperties>removeEnumValuePrefix=false</additionalProperties>
+			</configuration>
+			<executions>
+				<execution>
+					<id>openapi-generate-java</id>
+					<goals>
+						<goal>generate</goal>
+					</goals>
+					<configuration>
+						<inputSpec>
+							${project.basedir}/src/main/resources/openapi/antifraudsystem.yaml
+						</inputSpec>
+						<!-- See https://openapi-generator.tech/docs/generators/spring/ -->
+						<generatorName>spring</generatorName>
+						<!-- api and model packages follow base package path -->
+						<apiPackage>dev.stiebo.openapi_generator_sample.api</apiPackage>
+						<modelPackage>dev.stiebo.openapi_generator_sample.model</modelPackage>
+						<supportingFilesToGenerate>ApiUtil.java</supportingFilesToGenerate>
+						<configOptions>
+							<!-- Whether to generate the server files using the delegate pattern -->
+							<delegatePattern>true</delegatePattern>
+							<!-- Whether to generate constructors with required args for models -->
+							<generatedConstructorWithRequiredArgs>false</generatedConstructorWithRequiredArgs>
+							<!-- Hides the generation timestamp when files are generated -->
+							<hideGenerationTimestamp>true</hideGenerationTimestamp>
+							<!-- Disables OpenAPI Jackson Nullable library -->
+							<openApiNullable>false</openApiNullable>
+							<!-- Generate code and provide dependencies for use with Spring Boot 3.x -->
+							<useSpringBoot3>true</useSpringBoot3>
+							<!-- Use tags for creating interface and controller classnames -->
+							<useTags>true</useTags>
+						</configOptions>
+					</configuration>
+				</execution>
+				<execution>
+					<id>openapi-generate-asciidoc</id>
+					<goals>
+						<goal>generate</goal>
+					</goals>
+					<configuration>
+						<inputSpec>
+							${project.basedir}/src/main/resources/openapi/antifraudsystem.yaml
+						</inputSpec>
+						<generatorName>asciidoc</generatorName>
+					</configuration>
+				</execution>
+			</executions>
+		</plugin>
+		<plugin>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-maven-plugin</artifactId>
+		</plugin>
+	</plugins>
+</build>
+
+</project>
