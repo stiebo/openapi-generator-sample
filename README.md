@@ -1,5 +1,27 @@
 # SpringBoot API generated with OpenAPI Generator Maven Plugin
 
+## Code generation
+
+OpenAPI definition is under resources/openapi/antifraudsystem.yaml
+
+Run
+
+> mvn
+
+and you'll fine the code under:
+
+* target/generated-sources/openapi/index.adoc => Generated AsciiDoc
+* target/generated-sources/openapi/src/main/java/dev/stiebo/openapi_generator_sample => Generated Java Code using delegate pattern
+
+Run
+
+> mvn spring-boot:start 
+
+and you'll find Swagger under:
+
+* [http://localhost:8080/swagger-ui.html](http://localhost:8080/swagger-ui.html)
+
+
 ## Background
 
 Frauds carry significant financial costs and risks for all stakeholders. So, the presence of an anti-fraud system is a necessity for any serious e-commerce platform.

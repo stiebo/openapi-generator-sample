@@ -19,12 +19,24 @@
 
 <properties>
 	<java.version>23</java.version>
-	<openapi-generator-maven-plugin.version>7.9.0</openapi-generator-maven-plugin.version>
+	<openapi-generator-maven-plugin.version>7.8.0</openapi-generator-maven-plugin.version>
 	<spring-doc.version>2.6.0</spring-doc.version>
 </properties>
 
 <dependencies>
 	<!-- Standard Spring Boot dependencies -->
+	<dependency>
+		<groupId>org.springframework.boot</groupId>
+		<artifactId>spring-boot-starter-data-jpa</artifactId>
+	</dependency>
+	<dependency>
+		<groupId>org.springframework.boot</groupId>
+		<artifactId>spring-boot-starter-security</artifactId>
+	</dependency>
+	<dependency>
+		<groupId>org.springframework.boot</groupId>
+		<artifactId>spring-boot-starter-validation</artifactId>
+	</dependency>
 	<dependency>
 		<groupId>org.springframework.boot</groupId>
 		<artifactId>spring-boot-starter-web</artifactId>
@@ -36,8 +48,23 @@
 		<version>${spring-doc.version}</version>
 	</dependency>
 	<dependency>
+		<groupId>com.h2database</groupId>
+		<artifactId>h2</artifactId>
+		<scope>runtime</scope>
+	</dependency>
+	<dependency>
+		<groupId>org.projectlombok</groupId>
+		<artifactId>lombok</artifactId>
+		<optional>true</optional>
+	</dependency>
+	<dependency>
 		<groupId>org.springframework.boot</groupId>
 		<artifactId>spring-boot-starter-test</artifactId>
+		<scope>test</scope>
+	</dependency>
+	<dependency>
+		<groupId>org.springframework.security</groupId>
+		<artifactId>spring-security-test</artifactId>
 		<scope>test</scope>
 	</dependency>
 </dependencies>
@@ -67,7 +94,7 @@
 						<!-- api and model packages follow base package path -->
 						<apiPackage>dev.stiebo.openapi_generator_sample.api</apiPackage>
 						<modelPackage>dev.stiebo.openapi_generator_sample.model</modelPackage>
-						<supportingFilesToGenerate>ApiUtil.java</supportingFilesToGenerate>
+						<supportingFilesToGenerate>ApiUtil.java,SpringDocConfiguration.java</supportingFilesToGenerate>
 						<configOptions>
 							<!-- Whether to generate the server files using the delegate pattern -->
 							<delegatePattern>true</delegatePattern>
@@ -101,6 +128,30 @@
 		<plugin>
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-maven-plugin</artifactId>
+			<configuration>
+				<excludes>
+					<exclude>
+						<groupId>org.projectlombok</groupId>
+						<artifactId>lombok</artifactId>
+					</exclude>
+				</excludes>
+			</configuration>
+		</plugin>
+		<plugin>
+			<groupId>org.apache.maven.plugins</groupId>
+			<artifactId>maven-compiler-plugin</artifactId>
+			<version>3.13.0</version> <!-- Use the latest version -->
+			<configuration>
+				<source>23</source> <!-- Match your Java version -->
+				<target>23</target>
+				<annotationProcessorPaths>
+					<path>
+						<groupId>org.projectlombok</groupId>
+						<artifactId>lombok</artifactId>
+						<version>1.18.34</version> <!-- Match your Lombok version -->
+					</path>
+				</annotationProcessorPaths>
+			</configuration>
 		</plugin>
 	</plugins>
 </build>
