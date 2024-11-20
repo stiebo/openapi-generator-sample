@@ -67,7 +67,7 @@
 						<!-- api and model packages follow base package path -->
 						<apiPackage>dev.stiebo.openapi_generator_sample.api</apiPackage>
 						<modelPackage>dev.stiebo.openapi_generator_sample.model</modelPackage>
-						<supportingFilesToGenerate>ApiUtil.java</supportingFilesToGenerate>
+						<supportingFilesToGenerate>ApiUtil.java,SpringDocConfiguration.java</supportingFilesToGenerate>
 						<configOptions>
 							<!-- Whether to generate the server files using the delegate pattern -->
 							<delegatePattern>true</delegatePattern>
