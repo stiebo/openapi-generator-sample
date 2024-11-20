@@ -10,7 +10,7 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.context.request.WebRequest;
 
-import java.time.LocalDateTime;
+import java.time.OffsetDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -21,7 +21,7 @@ public class GlobalExceptionHandler {
     @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
     public ResponseEntity<ErrorResponse> handleInternalServerErrorException(Exception ex, WebRequest request) {
         return new ResponseEntity<>(new ErrorResponse(
-                LocalDateTime.now(),
+                OffsetDateTime.now(),
                 HttpStatus.INTERNAL_SERVER_ERROR.value(),
                 "Internal Server Error",
                 ex.getMessage(),
@@ -33,7 +33,7 @@ public class GlobalExceptionHandler {
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     public ResponseEntity<ErrorResponse> handleBadRequestException(Exception ex, WebRequest request) {
         return new ResponseEntity<>(new ErrorResponse(
-                LocalDateTime.now(),
+                OffsetDateTime.now(),
                 HttpStatus.BAD_REQUEST.value(),
                 "Bad request",
                 ex.getMessage(),
@@ -46,7 +46,7 @@ public class GlobalExceptionHandler {
     @ResponseStatus(HttpStatus.NOT_FOUND)
     public ResponseEntity<ErrorResponse> handleNotFoundException(Exception ex, WebRequest request) {
         return new ResponseEntity<>(new ErrorResponse(
-                LocalDateTime.now(),
+                OffsetDateTime.now(),
                 HttpStatus.NOT_FOUND.value(),
                 "Not Found",
                 ex.getMessage(),
@@ -60,7 +60,7 @@ public class GlobalExceptionHandler {
     @ResponseStatus(HttpStatus.CONFLICT)
     public ResponseEntity<ErrorResponse> handleConflictException(Exception ex, WebRequest request) {
         return new ResponseEntity<>(new ErrorResponse(
-                LocalDateTime.now(),
+                OffsetDateTime.now(),
                 HttpStatus.CONFLICT.value(),
                 "Conflict",
                 ex.getMessage(),
@@ -72,7 +72,7 @@ public class GlobalExceptionHandler {
     @ResponseStatus(HttpStatus.UNPROCESSABLE_ENTITY)
     public ResponseEntity<ErrorResponse> handleUnprocessableException(Exception ex, WebRequest request) {
         return new ResponseEntity<>(new ErrorResponse(
-                LocalDateTime.now(),
+                OffsetDateTime.now(),
                 HttpStatus.UNPROCESSABLE_ENTITY.value(),
                 "Unprocessable entity",
                 ex.getMessage(),
@@ -91,7 +91,7 @@ public class GlobalExceptionHandler {
             fieldErrors.add(new ValidationErrorResponse.FieldError(fieldName,errorMessage));
         });
         return new ResponseEntity<>(new ValidationErrorResponse(
-                LocalDateTime.now(),
+                OffsetDateTime.now(),
                 HttpStatus.BAD_REQUEST.value(),
                 "Validation failed for request parameters",
                 fieldErrors,
@@ -111,7 +111,7 @@ public class GlobalExceptionHandler {
         });
 
         return new ResponseEntity<>(new ValidationErrorResponse(
-                LocalDateTime.now(),
+                OffsetDateTime.now(),
                 HttpStatus.BAD_REQUEST.value(),
                 "Validation failed for request parameters",
                 fieldErrors,

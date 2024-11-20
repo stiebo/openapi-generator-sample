@@ -1,10 +1,10 @@
 package dev.stiebo.openapi_generator_sample.exception;
 
-import java.time.LocalDateTime;
+import java.time.OffsetDateTime;
 import java.util.List;
 
 public record ValidationErrorResponse(
-        LocalDateTime timestamp,
+        OffsetDateTime timestamp,
         int status,
         String error,
         List<FieldError> fieldErrors,
