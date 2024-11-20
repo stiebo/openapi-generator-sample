@@ -4,9 +4,35 @@ info:
   description: Documentation for the Anti-Fraud System API
   version: 0.0.1
 servers:
-  - url: https://stiebo.dev/antifraudsystem
-  - url: http://localhost:28858
+  - url: http://localhost:28859
+    description: Root path for the API
 paths:
+  /api/auth/user:
+    post:
+      tags:
+        - user-controller
+      summary: Create user
+      description: Register as a new user in the system
+      operationId: createUser
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/NewUserDto"
+        required: true
+      responses:
+        "201":
+          description: Created
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/UserDto"
+        "409":
+          description: User already exists
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
   /api/auth/role:
     put:
       tags:
@@ -152,32 +178,6 @@ paths:
                 $ref: "#/components/schemas/ValidationErrorResponse"
       security:
         - basicAuth: []
-  /api/auth/user:
-    post:
-      tags:
-        - user-controller
-      summary: Create user
-      description: Register as a new user in the system
-      operationId: createUser
-      requestBody:
-        content:
-          application/json:
-            schema:
-              $ref: "#/components/schemas/NewUserDto"
-        required: true
-      responses:
-        "409":
-          description: User already exists
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/ErrorResponse"
-        "201":
-          description: Created
-          content:
-            '*/*':
-              schema:
-                $ref: "#/components/schemas/UserDto"
   /api/antifraud/suspicious-ip:
     get:
       tags:
@@ -493,6 +493,10 @@ paths:
       security:
         - basicAuth: []
 components:
+  securitySchemes:
+    basicAuth:
+      type: http
+      scheme: basic
   schemas:
     ChangeRoleDto:
       required:
@@ -701,7 +705,3 @@ components:
           type: string
         status:
           type: string
-  securitySchemes:
-    basicAuth:
-      type: http
-      scheme: basic
