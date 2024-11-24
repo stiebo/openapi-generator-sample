@@ -4,3 +4,5 @@ target
 .gitattributes
 mvnw
 mvnw.cmd
+/antifraudsystemdb.mv.db
+/antifraudsystemdb.trace.db
